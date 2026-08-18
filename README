@@ -1,0 +1,5 @@
+Backend_4_Periodo
+- Site para cadastro de produtos (drones) com apresentação de fotos, Título, Descrição, valor de cada produto.
+- Cadastro de Usuário: Admin (vendedor) para manipular os produtos. Comum (cliente) apenas visualizar.
+- ProdutoEntity Id Titulo Descricao Preco
+- UsuarioEntity id Nome senha email
