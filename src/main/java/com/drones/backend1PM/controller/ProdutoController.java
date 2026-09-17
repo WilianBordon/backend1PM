@@ -4,93 +4,65 @@ import com.drones.backend1PM.dto.ProdutoRequest;
 import com.drones.backend1PM.dto.ProdutoResponse;
 import com.drones.backend1PM.entity.Produto;
 import com.drones.backend1PM.service.ProdutoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/produtos")
+@RequiredArgsConstructor
 public class ProdutoController {
 
-    @Autowired
-    private ProdutoService produtoService;
+    private final ProdutoService produtoService;
 
-    @PostMapping("/cadastrar")
-    public ResponseEntity<ProdutoResponse> cadastrar(@RequestBody ProdutoRequest produtoRequest) {
-        try {
-            Produto produtoEntity = this.produtoService.salvar(produtoRequest);
-            return new ResponseEntity<>(ProdutoResponse.de(produtoEntity), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @PostMapping
+    public ResponseEntity<ProdutoResponse> cadastrar(@Valid @RequestBody ProdutoRequest request) {
+        Produto produto = this.produtoService.salvar(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProdutoResponse.de(produto));
     }
 
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<List<ProdutoResponse>> listar() {
-        try {
-            List<ProdutoResponse> produtoList = this.produtoService.listar()
-                    .stream()
-                    .map(ProdutoResponse::de)
-                    .toList();
+        List<ProdutoResponse> produtoList = this.produtoService.listar()
+                .stream()
+                .map(ProdutoResponse::de)
+                .toList();
 
-            return new ResponseEntity<>(produtoList, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
-        }
+        return ResponseEntity.ok(produtoList);
     }
 
     @GetMapping("/buscarpornome")
     public ResponseEntity<List<ProdutoResponse>> buscarPorNome(@RequestParam String nome) {
-        try {
-            List<ProdutoResponse> produtoList = this.produtoService.buscarPorNome(nome)
-                    .stream()
-                    .map(ProdutoResponse::de)
-                    .toList();
+        List<ProdutoResponse> produtoList = this.produtoService.buscarPorNome(nome)
+                .stream()
+                .map(ProdutoResponse::de)
+                .toList();
 
-            return new ResponseEntity<>(produtoList, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok(produtoList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponse> buscarPorId(@PathVariable Long id) {
-        try {
-            Optional<Produto> produtoOptional = this.produtoService.buscarPorId(id);
-            if (produtoOptional.isPresent()) {
-                return new ResponseEntity<>(ProdutoResponse.de(produtoOptional.get()), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return this.produtoService.buscarPorId(id)
+                .map(produto -> ResponseEntity.ok(ProdutoResponse.de(produto)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProdutoResponse> atualizar(
-            @PathVariable Long id,
-            @RequestBody ProdutoRequest produtoRequest) {
-        try {
-            Produto produtoEntity = this.produtoService.atualizar(id, produtoRequest);
-            return new ResponseEntity<>(ProdutoResponse.de(produtoEntity), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ProdutoResponse> atualizar(@PathVariable Long id,
+            @Valid @RequestBody ProdutoRequest request) {
+        Produto produto = this.produtoService.atualizar(id, request);
+        return ResponseEntity.ok(ProdutoResponse.de(produto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        try {
-            this.produtoService.excluir(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        this.produtoService.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }
-
-
