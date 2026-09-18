@@ -21,7 +21,7 @@ public class Conta {
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
