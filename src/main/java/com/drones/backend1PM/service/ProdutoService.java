@@ -8,27 +8,39 @@ import com.drones.backend1PM.repository.CategoriaRepository;
 import com.drones.backend1PM.repository.ProdutoRepository;
 import com.drones.backend1PM.repository.SubcategoriaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProdutoService {
-
+// as
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
     private final SubcategoriaRepository subcategoriaRepository;
 
     public Produto salvar(ProdutoRequest request) {
         Categoria categoria = categoriaRepository.findById(request.categoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> {
+                    log.warn("Categoria não encontrada. ID: {}", request.categoriaId());
+                    return new RuntimeException("Categoria não encontrada");
+                });
 
         Subcategoria subcategoria = null;
         if (request.subcategoriaId() != null) {
+
+            log.info("Buscando subcategoria. ID: {}", request.subcategoriaId());
+
             subcategoria = subcategoriaRepository.findById(request.subcategoriaId())
-                    .orElseThrow(() -> new RuntimeException("Subcategoria não encontrada"));
+
+                    .orElseThrow(() -> {
+                        log.warn("Subcategoria não encontrada. ID: {}",request.subcategoriaId());
+                            return new RuntimeException("Subcategoria não encontrada");
+                    });
         }
 
         Produto produto = new Produto();
@@ -47,32 +59,72 @@ public class ProdutoService {
         produto.setCategoria(categoria);
         produto.setSubcategoria(subcategoria);
 
-        return produtoRepository.save(produto);
+        Produto produtoSalvo = produtoRepository.save(produto);
+        log.info("Produto cadastrado com sucesso. ID: {}, Nome: {}", produtoSalvo.getId(), produtoSalvo.getNome());
+
+        return produtoSalvo;
     }
 
     public List<Produto> listar() {
-        return produtoRepository.findAll();
+
+        log.info("Buscando todos os produtos");
+
+        List<Produto> produtos = produtoRepository.findAll();
+
+        log.info("Foram encontrados {} produtos", produtos.size());
+
+        return produtos;
     }
 
     public Optional<Produto> buscarPorId(Long id) {
-        return produtoRepository.findById(id);
+        log.info("Buscando produto pelo ID: {}", id);
+
+        Optional<Produto> produto = produtoRepository.findById(id);
+
+        if (produto.isPresent()) {
+            log.info("Produto encontrado. ID: {}", id);
+        } else {
+            log.warn("Produto não encontrado. ID: {}", id);
+        }
+
+        return produto;
     }
 
     public List<Produto> buscarPorNome(String nome) {
-        return produtoRepository.findByNomeContainingIgnoreCase(nome);
+        log.info("Buscando produtos pelo nome: {}", nome);
+
+        List<Produto> produtos =
+                produtoRepository.findByNomeContainingIgnoreCase(nome);
+
+        log.info("Foram encontrados {} produtos para a busca '{}'",
+                produtos.size(),
+                nome);
+
+        return produtos;
     }
 
     public Produto atualizar(Long id, ProdutoRequest request) {
+
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> {
+                    log.warn("Produto não encontrado para atualização. ID: {}", id);
+                    return new RuntimeException("Produto não encontrado");
+
+                });
 
         Categoria categoria = categoriaRepository.findById(request.categoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> {
+                    log.warn("Categoria não encontrada durante atualização. ID: {}", request.categoriaId());
+                    return new RuntimeException("Categoria não encontrada");
+                });
 
         Subcategoria subcategoria = null;
         if (request.subcategoriaId() != null) {
             subcategoria = subcategoriaRepository.findById(request.subcategoriaId())
-                    .orElseThrow(() -> new RuntimeException("Subcategoria não encontrada"));
+                    .orElseThrow(() -> {
+                        log.warn("Subcategoria não encontrada durante atualização. ID: {}", request.subcategoriaId());
+                        return new RuntimeException("Subcategoria não encontrada");
+                    });
         }
 
         produto.setNome(request.nome());
@@ -90,10 +142,20 @@ public class ProdutoService {
         produto.setCategoria(categoria);
         produto.setSubcategoria(subcategoria);
 
+        log.info("Produto atualizado com sucesso. ID: {}", id);
+
         return produtoRepository.save(produto);
     }
 
     public void excluir(Long id) {
+
+        if (!produtoRepository.existsById(id)) {
+            log.warn("Tentativa de excluir produto inexistente. ID: {}", id);
+            throw new RuntimeException("Produto não encontrado");
+        }
+
         produtoRepository.deleteById(id);
+
+        log.info("Produto excluído com sucesso. ID: {}", id);
     }
 }
