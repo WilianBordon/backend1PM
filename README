@@ -1,5 +1,44 @@
-Backend_4_Periodo
-- Site para cadastro de produtos (drones) com apresentação de fotos, Título, Descrição, valor de cada produto.
-- Cadastro de Usuário: Admin (vendedor) para manipular os produtos. Comum (cliente) apenas visualizar.
-- ProdutoEntity Id Titulo Descricao Preco
-- UsuarioEntity id Nome senha email
+# BACKEND - ENTREGA FINAL
+
+## Sobre o projeto
+
+O sistema permite o cadastro e gerenciamento de produtos, contendo informações como título, descrição, preço e imagem.
+
+Também possui cadastro de usuários com diferentes níveis de acesso:
+
+- **Admin (vendedor)
+- **Usuário comum (cliente)
+
+## Tecnologias utilizadas
+
+- Java 17
+- Spring Boot 3.3.5
+- Spring Data JPA
+- Hibernate
+- H2 Database
+- Flyway
+- Maven
+- Swagger / OpenAPI
+- Lombok
+- Spring Cloud OpenFeign
+
+## Estrutura do projeto
+
+O projeto está organizado seguindo uma estrutura em camadas:
+
+- controller
+- service
+- repository
+- entity
+- dto
+- exception
+- config
+- client
+
+## Documentação da API
+
+A API possui documentação através do **Swagger/OpenAPI**.
+
+Com a aplicação em execução, a documentação pode ser acessada em:
+
+`http://localhost:8081/swagger-ui/index.html`
