@@ -11,6 +11,7 @@ import com.drones.backend1PM.repository.PedidoRepository;
 import com.drones.backend1PM.repository.ProdutoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PedidoService {
@@ -30,7 +32,10 @@ public class PedidoService {
     @Transactional
     public Pedido salvar(PedidoRequest request) {
         Conta conta = contaRepository.findById(request.contaId())
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() ->{
+                    log.warn("Conta não encontrada. ID: {}", request.contaId());
+                    return new RuntimeException("Conta não encontrada");
+                });
 
         Pedido pedido = new Pedido();
         pedido.setConta(conta);
@@ -51,7 +56,10 @@ public class PedidoService {
 
         for (PedidoRequest.ItemPedidoRequest itemRequest : request.itens()) {
             Produto produto = produtoRepository.findById(itemRequest.produtoId())
-                    .orElseThrow(() -> new RuntimeException("Produto não encontrado: " + itemRequest.produtoId()));
+                    .orElseThrow(() -> {
+                        log.warn("Produto não encontrado. ID: {}", itemRequest.produtoId());
+                        return new RuntimeException("Produto não encontrado: " + itemRequest.produtoId());
+                    });
 
             PedidoItem item = new PedidoItem();
             item.setPedido(pedido);
@@ -114,14 +122,40 @@ public class PedidoService {
     }
 
     public List<Pedido> listar() {
-        return pedidoRepository.findAll();
+        log.info("Buscando todos os pedidos");
+
+        List<Pedido> pedidos = pedidoRepository.findAll();
+
+        log.info("Foram encontrados {} pedidos", pedidos.size());
+
+        return pedidos;
+
     }
 
     public Optional<Pedido> buscarPorId(Long id) {
-        return pedidoRepository.findById(id);
+        log.info("Buscando pedido pelo ID: {}", id);
+
+        Optional<Pedido> pedidos = pedidoRepository.findById(id);
+
+        if (pedidos.isPresent()) {
+            log.info("Pedido encontrado. ID: {}", id);
+        } else {
+            log.warn("Pedido não encontrado. ID: {}", id);
+        }
+
+        return pedidos;
     }
 
     public void excluir(Long id) {
+        log.info("Iniciando exclusão do pedido. ID: {}", id);
+
+        if (!pedidoRepository.existsById(id)) {
+            log.warn("Tentativa de excluir pedido inexistente. ID: {}", id);
+            throw new RuntimeException("Pedido não encontrado");
+        }
+
         pedidoRepository.deleteById(id);
+
+        log.info("Pedido excluído com sucesso. ID: {}", id);
     }
 }
