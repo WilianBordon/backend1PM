@@ -103,6 +103,34 @@ public class ProdutoService {
         return produtos;
     }
 
+    public List<Produto> listarPorCategoria(Long categoriaId) {
+
+        log.info("Buscando produtos da categoria. ID: {}", categoriaId);
+
+        List<Produto> produtos =
+                produtoRepository.findByCategoriaId(categoriaId);
+
+        log.info("Foram encontrados {} produtos na categoria {}",
+                produtos.size(),
+                categoriaId);
+
+        return produtos;
+    }
+
+    public List<Produto> listarPorSubcategoria(Long subcategoriaId) {
+
+        log.info("Buscando produtos da subcategoria. ID: {}", subcategoriaId);
+
+        List<Produto> produtos =
+                produtoRepository.findBySubcategoriaId(subcategoriaId);
+
+        log.info("Foram encontrados {} produtos na subcategoria {}",
+                produtos.size(),
+                subcategoriaId);
+
+        return produtos;
+    }
+
     public Produto atualizar(Long id, ProdutoRequest request) {
 
         Produto produto = produtoRepository.findById(id)
