@@ -60,6 +60,32 @@ public class ProdutoController {
         return ResponseEntity.ok(ProdutoResponse.de(produto));
     }
 
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<List<ProdutoResponse>> listarPorCategoria(
+            @PathVariable Long categoriaId) {
+
+        List<ProdutoResponse> produtoList =
+                produtoService.listarPorCategoria(categoriaId)
+                        .stream()
+                        .map(ProdutoResponse::de)
+                        .toList();
+
+        return ResponseEntity.ok(produtoList);
+    }
+
+    @GetMapping("/subcategoria/{subcategoriaId}")
+    public ResponseEntity<List<ProdutoResponse>> listarPorSubcategoria(
+            @PathVariable Long subcategoriaId) {
+
+        List<ProdutoResponse> produtoList =
+                produtoService.listarPorSubcategoria(subcategoriaId)
+                        .stream()
+                        .map(ProdutoResponse::de)
+                        .toList();
+
+        return ResponseEntity.ok(produtoList);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         this.produtoService.excluir(id);
