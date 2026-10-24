@@ -1,0 +1,61 @@
+TESTE DE CARGA COM JMETER
+
+Data: 24/10/2026
+Versão do backend: commit 8d2b12e
+Ferramenta: Apache JMeter 5.6.3
+
+Objetivo
+Avaliar a consulta GET http://localhost:8081/produtos
+com diferentes cargas de acesso.
+
+Ambiente
+Backend e JMeter executados no mesmo computador.
+Banco H2 em memória, com 6 produtos cadastrados.
+Execução pelo terminal e validação de resposta HTTP 200.
+
+Cenários
+1. 10 usuários, ramp-up de 10 segundos e 10 repetições:
+   100 requisições.
+
+2. 20 usuários, ramp-up de 10 segundos e 10 repetições:
+   200 requisições.
+
+3. 50 usuários, ramp-up de 10 segundos e repetição
+   contínua durante 120 segundos: 141.087 requisições.
+
+Resultados
+                    10 usuários  20 usuários  50 usuários
+Média (ms)             13,25        8,55        40,72
+Máximo (ms)            90           129         742
+Percentil 95 (ms)      30,90        17          101
+Requisições/s          11,14        21,16       1.176,33
+Erros                  0%           0%          0%
+
+Análise
+Não ocorreram falhas nos três cenários. No teste
+sustentado de 50 usuários, 95% das respostas levaram
+até 101 ms, com média de 40,72 ms e máximo de 742 ms.
+
+A média menor no cenário de 20 usuários pode estar
+relacionada ao aquecimento da aplicação e a variações
+locais. Isso não comprova que aumentar usuários
+melhora o desempenho.
+
+Não foi possível identificar um gargalo específico.
+Não houve monitoramento de CPU, memória ou banco
+para determinar a origem das variações de tempo.
+
+Limitações
+Os cenários de 10 e 20 usuários foram curtos e não
+garantem todos os usuários ativos simultaneamente.
+O cenário de 50 usuários teve duração e volume
+diferentes, portanto não isola apenas a mudança na
+quantidade de usuários.
+
+Os resultados representam uma consulta local com
+6 produtos e H2 em memória. Não comprovam o limite
+de capacidade nem o desempenho em produção.
+
+Entrega
+Planos .jmx, arquivos de resultados .jtl, pastas
+completas dos relatórios HTML e esta análise.
