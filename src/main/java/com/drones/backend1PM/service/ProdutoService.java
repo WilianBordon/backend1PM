@@ -44,6 +44,19 @@ public class ProdutoService {
         }
 
         Produto produto = new Produto();
+        preencherDadosProduto(request, produto);
+        produto.setAtivo(request.ativo() != null ? request.ativo() : true);
+        produto.setDestaque(request.destaque() != null ? request.destaque() : false);
+        produto.setCategoria(categoria);
+        produto.setSubcategoria(subcategoria);
+
+        Produto produtoSalvo = produtoRepository.save(produto);
+        log.info("Produto cadastrado com sucesso. ID: {}, Nome: {}", produtoSalvo.getId(), produtoSalvo.getNome());
+
+        return produtoSalvo;
+    }
+
+    private static void preencherDadosProduto(ProdutoRequest request, Produto produto) {
         produto.setNome(request.nome());
         produto.setDescricao(request.descricao());
         produto.setPreco(request.preco());
@@ -54,15 +67,6 @@ public class ProdutoService {
         produto.setCircunferencia(request.circunferencia());
         produto.setPesoAprox(request.pesoAprox());
         produto.setImagemPrincipal(request.imagemPrincipal());
-        produto.setAtivo(request.ativo() != null ? request.ativo() : true);
-        produto.setDestaque(request.destaque() != null ? request.destaque() : false);
-        produto.setCategoria(categoria);
-        produto.setSubcategoria(subcategoria);
-
-        Produto produtoSalvo = produtoRepository.save(produto);
-        log.info("Produto cadastrado com sucesso. ID: {}, Nome: {}", produtoSalvo.getId(), produtoSalvo.getNome());
-
-        return produtoSalvo;
     }
 
     public List<Produto> listar() {
@@ -155,16 +159,7 @@ public class ProdutoService {
                     });
         }
 
-        produto.setNome(request.nome());
-        produto.setDescricao(request.descricao());
-        produto.setPreco(request.preco());
-        produto.setQuantidade(request.quantidade());
-        produto.setAltura(request.altura());
-        produto.setLargura(request.largura());
-        produto.setDiametro(request.diametro());
-        produto.setCircunferencia(request.circunferencia());
-        produto.setPesoAprox(request.pesoAprox());
-        produto.setImagemPrincipal(request.imagemPrincipal());
+        preencherDadosProduto(request, produto);
         produto.setAtivo(request.ativo() != null ? request.ativo() : produto.getAtivo());
         produto.setDestaque(request.destaque() != null ? request.destaque() : produto.getDestaque());
         produto.setCategoria(categoria);
