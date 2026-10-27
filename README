@@ -42,3 +42,44 @@ A API possui documentação através do **Swagger/OpenAPI**.
 Com a aplicação em execução, a documentação pode ser acessada em:
 
 `http://localhost:8081/swagger-ui/index.html`
+
+## Como rodar o projeto
+
+Pra rodar a aplicacão precisa ter o Java 17 instalado. Nao precisa instalar maven separado pq ja tem o wrapper no projeto.
+
+No terminal, na pasta raiz:
+
+No Windows:
+.\mvnw.cmd spring-boot:run
+
+No Linux / Mac:
+./mvnw spring-boot:run
+
+A api sobe na porta 8081.
+
+## Banco de Dados H2
+
+Pra acessar o banco em memoria no navegador:
+- URL: http://localhost:8081/h2-console
+- JDBC URL: jdbc:h2:mem:backend1pm
+- User Name: sa
+- Password: em branco
+
+## Como rodar os testes e ver cobertura
+
+Pra rodar todos os testes unitarios e integrados pelo terminal:
+
+No Windows:
+.\mvnw.cmd test
+
+No Linux / Mac:
+./mvnw test
+
+Depois que terminar de rodar, o relatorio do JaCoCo e gerado altomaticamente em:
+target/site/jacoco/index.html
+
+So abrir esse index.html no navegador pra ver a porcentagem de cobertura.
+
+## Testes de carga (JMeter)
+
+Os testes de carga foram feitos usando o Apache JMeter na rota /produtos com 10, 20 e 50 usuarios. Os arquivos .jmx, os relatorios gerados e a analise dos resultados estao salvos na pasta teste-carga.
