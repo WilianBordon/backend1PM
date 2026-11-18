@@ -6,5 +6,6 @@ public record ContaRequest(
         @NotBlank(message = "Nome é obrigatório") String nome,
         String email,
         @NotBlank(message = "Senha é obrigatória") String senha,
-        @NotBlank(message = "Telefone é obrigatório") String telefone) {
+        @NotBlank(message = "Telefone é obrigatório") String telefone,
+        String role) {
 }

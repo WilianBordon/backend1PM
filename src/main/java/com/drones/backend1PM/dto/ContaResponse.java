@@ -6,7 +6,8 @@ public record ContaResponse(
         Long id,
         String nome,
         String email,
-        String telefone) {
+        String telefone,
+        String role) {
     public static ContaResponse de(Conta conta) {
         if (conta == null) {
             return null;
@@ -16,6 +17,7 @@ public record ContaResponse(
                 conta.getId(),
                 conta.getNome(),
                 conta.getEmail(),
-                conta.getTelefone());
+                conta.getTelefone(),
+                conta.getRole());
     }
 }

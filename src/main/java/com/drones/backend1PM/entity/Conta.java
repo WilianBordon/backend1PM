@@ -29,4 +29,7 @@ public class Conta {
 
     @Column(nullable = false)
     private String telefone;
+
+    @Column(nullable = false)
+    private String role;
 }

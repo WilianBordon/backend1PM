@@ -23,6 +23,7 @@ public class ContaService {
         conta.setEmail(request.email());
         conta.setSenha(request.senha());
         conta.setTelefone(request.telefone());
+        conta.setRole(request.role());
         return contaRepository.save(conta);
     }
 
@@ -65,6 +66,7 @@ public class ContaService {
         conta.setEmail(request.email());
         conta.setSenha(request.senha());
         conta.setTelefone(request.telefone());
+        conta.setRole(request.role());
         return contaRepository.save(conta);
     }
 
