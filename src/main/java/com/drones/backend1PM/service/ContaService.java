@@ -6,9 +6,11 @@ import com.drones.backend1PM.repository.ContaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class ContaService {
 
     private final ContaRepository contaRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
 
@@ -23,7 +26,7 @@ public class ContaService {
         Conta conta = new Conta();
         conta.setNome(request.nome());
         conta.setEmail(request.email());
-        conta.setSenha(request.senha());
+        conta.setSenha(passwordEncoder.encode(request.senha()));
         conta.setTelefone(request.telefone());
         conta.setRole(request.role());
         return contaRepository.save(conta);
@@ -66,7 +69,7 @@ public class ContaService {
 
         conta.setNome(request.nome());
         conta.setEmail(request.email());
-        conta.setSenha(request.senha());
+        conta.setSenha(passwordEncoder.encode(request.senha()));
         conta.setTelefone(request.telefone());
         conta.setRole(request.role());
         return contaRepository.save(conta);
