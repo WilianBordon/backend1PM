@@ -9,13 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/contas")
 @RequiredArgsConstructor
+@PreAuthorize("hasAuthority('ADMIN')")
 public class ContaController {
 
     private final ContaService contaService;
